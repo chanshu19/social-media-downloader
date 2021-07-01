@@ -50,9 +50,9 @@ def api():
     if(extractor=="youtube"):
         try:
             streams = ct.getDownloadUrlForYoutube()
-            return jsonify({streams:streams})
+            return jsonify({"streams":streams})
         except:
-            return jsonify({streams:"Something went wrong"})
+            return jsonify({"streams":"Something went wrong"})
 
     elif(extractor=="facebook"):
         print(extractor)
