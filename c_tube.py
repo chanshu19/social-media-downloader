@@ -24,21 +24,22 @@ class CTube:
         verbose = True
         for stream in streams:
             if stream['height']!='none' and stream['vcodec']=='none' and verbose:
-                video_stream = {
-                'title':title + ".mp4",
-                'url':stream['url'],
-                'height':stream['height']
+                audio_stream = {
+                'height':stream['height'],
+                'ext':stream['ext'],
+                'title':title + ".mp3",
+                'url':stream['url']
                 }
                 filtered_stream.append(video_stream)
                 verbose = False
                 # print(f" * {stream['filesize']} , {stream['height']}, {stream['acodec']}, {stream['vcodec']}, {stream['ext']} ,{stream['url']}")
                 
             elif stream['height']!='none' and stream['vcodec']!='none' and stream['acodec']!='none':
-                audio_stream = {
-                'title':title + ".mp3",
-                'url':stream['url'],
+                video_stream = {
                 'height':stream['height'],
-                'ext':stream['ext']
+                'ext':stream['ext'],
+                'title':title + ".mp4",
+                'url':stream['url']
                 }
                 filtered_stream.append(audio_stream)
         return filtered_stream
