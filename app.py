@@ -16,14 +16,14 @@ def index():
         if recieved_filetype == 'Video':
             t = ct.getDownloadUrlForYoutube()
             try:
-                url = t['v720']
+                url = t[-1]['url']
                 return render_template('index.html', thumbnail=thumbnail, url=url)
             except:
-                url = t['v360']
+                url = t[1]['url']
                 return render_template('index.html', thumbnail=thumbnail, url=url)
         elif recieved_filetype == 'Audio':
             t = ct.getDownloadUrlForYoutube(only_audio=True)
-            url = t['audio']
+            url = t[0]['url']
             return render_template('index.html',thumbnail=thumbnail, url=url)
         else:
             return "Pls choose valid type"
@@ -45,36 +45,31 @@ def api():
     data = request.get_json()
     ct = CTube(data['url'])
     extractor = ct.extractor
-    title = ct.results('title')
 
-    if data['type'] == 'Video':
-        # for Youtube
-        if(extractor=="youtube"):
-            try:
-                t = ct.getDownloadUrlForYoutube()
-                url = t['v720']
-                return jsonify({'url':url, 'title':f"{title}.mp4"})
-            except:
-                t = ct.getDownloadUrlForYoutube()
-                url = t['v360']
-                return jsonify({'url':url, 'title':f"{title}.mp4"})
-        elif(extractor=="facebook"):
-            print(extractor)
-            url = ct.getDownloadUrlForFacebook()
-            # print(url)
-            # return jsonify({'url':'not......'})
-            return jsonify({'url':url, 'title':title + '.mp4'})
-    elif data['type'] == 'Audio':
+    # for Youtube
+    if(extractor=="youtube"):
         try:
-            t = ct.getDownloadUrlForYoutube(only_audio=True)
-            url = t['audio']
-            return jsonify({'url':url, 'title':f"{title}.mp3"})
+            streams = ct.getDownloadUrlForYoutube()
+            return jsonify({streams:streams})
         except:
-            return jsonify({'message':'(:something went wrong'})
+            return jsonify({streams:"Something went wrong"})
+
+    elif(extractor=="facebook"):
+        print(extractor)
+        url = ct.getDownloadUrlForFacebook()
+        # print(url)
+        # return jsonify({'url':'not......'})
+        return jsonify({'url':url, 'title':title + '.mp4'})
     else:
         return jsonify({'error':'Something went wrong'})
 
-        
+@app.route('/api/thumbnail', methods=['POST'])
+def api_thumbnail():
+    rcvd_url = request.get_json()
+    ct = CTube(rcvd_url['url'])
+    res = ct.results('thumbnail')
+    return jsonify({'thumbnail':res})   
+
 @app.route('/api/tags', methods=['POST'])
 def api_tags():
     rcvd_url = request.get_json()
