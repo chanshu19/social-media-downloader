@@ -19,7 +19,7 @@ class CTube:
     
     def getDownloadUrlForYoutube(self):
         streams = self.results('formats')
-        title = ct.results('title')
+        title = self.results('title')
         filtered_stream = []
         verbose = True
         for stream in streams:
