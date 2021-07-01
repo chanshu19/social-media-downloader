@@ -23,25 +23,25 @@ class CTube:
         filtered_stream = []
         verbose = True
         for stream in streams:
-            if stream['height']!='none' and stream['vcodec']=='none' and verbose:
+            if stream['height']!='none' and stream['vcodec']=='none' and verbose: # for Audio
                 audio_stream = {
                 'height':stream['height'],
                 'ext':stream['ext'],
                 'title':title + ".mp3",
                 'url':stream['url']
                 }
-                filtered_stream.append(video_stream)
+                filtered_stream.append(audio_stream)
                 verbose = False
                 # print(f" * {stream['filesize']} , {stream['height']}, {stream['acodec']}, {stream['vcodec']}, {stream['ext']} ,{stream['url']}")
                 
-            elif stream['height']!='none' and stream['vcodec']!='none' and stream['acodec']!='none':
+            elif stream['height']!='none' and stream['vcodec']!='none' and stream['acodec']!='none': # for Video
                 video_stream = {
                 'height':stream['height'],
                 'ext':stream['ext'],
                 'title':title + ".mp4",
                 'url':stream['url']
                 }
-                filtered_stream.append(audio_stream)
+                filtered_stream.append(video_stream)
         return filtered_stream
     
     def getDownloadUrlForFacebook(self):
