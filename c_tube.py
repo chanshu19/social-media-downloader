@@ -5,8 +5,6 @@ class CTube:
     def __init__(self, url):
         self.url = url
         self.extractor = self.results('extractor')
-        self.media_stream = {}
-
     def allOptions(self):
         ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
         with ydl:
@@ -19,16 +17,31 @@ class CTube:
             result = ydl.extract_info(url=self.url,download=False)
             return result[option]
     
-    def getDownloadUrlForYoutube(self, only_audio=False):
-        video = self.results('formats')
-        for i, stream in enumerate(video):
-            if stream['height']==None and only_audio:
-                # returns a list of audio urls
-                self.media_stream[f'audio'] = stream['url']
-            elif stream['height']!=None and only_audio==False:
-                # returns a list of video urls
-                self.media_stream[f'v{stream["height"]}'] = stream['url']
-        return self.media_stream
+    def getDownloadUrlForYoutube(self):
+        streams = self.results('formats')
+        title = ct.results('title')
+        filtered_stream = []
+        verbose = True
+        for stream in streams:
+            if stream['height']!='none' and stream['vcodec']=='none' and verbose:
+                video_stream = {
+                'title':title + ".mp4",
+                'url':stream['url'],
+                'height':stream['height']
+                }
+                filtered_stream.append(video_stream)
+                verbose = False
+                # print(f" * {stream['filesize']} , {stream['height']}, {stream['acodec']}, {stream['vcodec']}, {stream['ext']} ,{stream['url']}")
+                
+            elif stream['height']!='none' and stream['vcodec']!='none' and stream['acodec']!='none':
+                audio_stream = {
+                'title':title + ".mp3",
+                'url':stream['url'],
+                'height':stream['height'],
+                'ext':stream['ext']
+                }
+                filtered_stream.append(audio_stream)
+        return filtered_stream
     
     def getDownloadUrlForFacebook(self):
         try:
@@ -40,12 +53,13 @@ class CTube:
           
 
 if __name__ == "__main__":
-
-    ct = CTube('https://www.facebook.com/ShareChatApp/videos/3930092723689373/')
-    print(ct.results('title'))
-
+    url = "https://www.youtube.com/watch?v=aS4slsNv89A"
+    ct = CTube(url)
+    # print(ct.results('title'))
     print("\n")
-    print(ct.extractor)
-    print(ct.getDownloadUrlForFacebook())
+    # print(ct.extractor)
+    # print(ct.results('thumbnail'))
+    print(ct.getDownloadUrlForYoutube())
+
         
     
